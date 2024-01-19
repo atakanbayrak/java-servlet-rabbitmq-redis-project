@@ -1,29 +1,40 @@
 package com.example.calis;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
-public class DatabaseProcess {
+public class Database {
 
     // Bunun tekil oluşması lazım multithread yüzünden patlayabiliyor. Valotile, Synchronize
-    private static DatabaseProcess process = new DatabaseProcess();
+    private static Database process = new Database();
 
-    private DatabaseProcess()
+    private Database()
     {
         System.out.println("Database Process sınıfını Singleton olarak oluşturuldu.");
     }
-    public static DatabaseProcess getInstance()
+    public static Database getInstance()
     {
         return process;
     }
+
+    private static final String url = "jdbc:postgresql://localhost:5432/servlet";
+    private static final String user = "postgres";
+    private static final String password = "12345";
+
+    public static Connection connect() throws SQLException {
+        try {
+            Class.forName("org.postgresql.Driver");
+            return DriverManager.getConnection(url, user, password);
+        } catch (ClassNotFoundException e) {
+            throw new SQLException(e);
+        }
+    }
+
     // process null check yapılması lazım
     String qry = "insert into users (fullname,tc) values (?,?)";
     public void saveToDatabase(String fullname, String tckn)
     {
         try {
-            Connection connection = DatabaseConnection.connect();
+            Connection connection = Database.connect();
             PreparedStatement insert = connection.prepareStatement(qry);
             insert.setString(1,fullname);
             insert.setString(2,tckn);
@@ -40,7 +51,7 @@ public class DatabaseProcess {
         ResultSet result = null;
         String slct = "SELECT * FROM users WHERE tc = '"+tckn+"'";
         try {
-            Connection connection = DatabaseConnection.connect();
+            Connection connection = Database.connect();
             PreparedStatement select = connection.prepareStatement(slct);
             result = select.executeQuery();
             connection.close();
@@ -71,7 +82,7 @@ public class DatabaseProcess {
         ResultSet result = null;
         String slct = "SELECT * FROM users WHERE fullname = '"+name+"' AND tc = '"+tckn+"'";
         try {
-            Connection connection = DatabaseConnection.connect();
+            Connection connection = Database.connect();
             PreparedStatement select = connection.prepareStatement(slct);
             result = select.executeQuery();
             connection.close();

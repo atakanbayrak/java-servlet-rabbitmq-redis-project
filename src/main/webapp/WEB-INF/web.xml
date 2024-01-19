@@ -4,11 +4,11 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
     <servlet>
-        <servlet-name>RequestTutorial</servlet-name>
-        <servlet-class>com.example.calis.RequestTutorial</servlet-class>
+        <servlet-name>Controller</servlet-name>
+        <servlet-class>com.example.calis.Controller</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>RequestTutorial</servlet-name>
-        <url-pattern>/request-tutorial</url-pattern>
+        <servlet-name>Controller</servlet-name>
+        <url-pattern>/controller</url-pattern>
     </servlet-mapping>
 </web-app>

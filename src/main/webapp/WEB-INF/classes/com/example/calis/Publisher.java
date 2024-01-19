@@ -6,25 +6,22 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeoutException;
 
-public class IdentityPublisher {
+public class Publisher {
 
     private Channel channel;
     private Connection connection;
 
-    private static IdentityPublisher identityPublisher = new IdentityPublisher();
-    private IdentityPublisher()
+    private static Publisher publisher = new Publisher();
+    private Publisher()
     {
         System.out.println("Publisher Singleton oluşturuldu.");
     }
 
-    public static IdentityPublisher getInstance()
+    public static Publisher getInstance()
     {
-        return identityPublisher;
+        return publisher;
     }
 
     public void createProcess(String fullname,String tckn) throws TimeoutException {
@@ -33,7 +30,7 @@ public class IdentityPublisher {
         Channel channel;
         try
         {
-            connection = factory.newConnection(RabbitConfig.AMQP_URL);
+            connection = factory.newConnection(Config.AMQP_URL);
             System.out.println("Connection Yaratıldı");
             channel = connection.createChannel();
             System.out.println("Channel Oluşturuldu");
