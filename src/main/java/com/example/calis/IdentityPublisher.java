@@ -27,8 +27,8 @@ public class IdentityPublisher {
         return identityPublisher;
     }
 
-    public void createProcess(String fullname,String tckn, ConnectionFactory fac) throws TimeoutException {
-        ConnectionFactory factory = fac;
+    public void createProcess(String fullname,String tckn) throws TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
         Connection connection;
         Channel channel;
         try

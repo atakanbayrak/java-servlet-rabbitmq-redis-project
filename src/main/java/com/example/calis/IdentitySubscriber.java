@@ -82,8 +82,9 @@ public class IdentitySubscriber {
                         System.out.println("Veritabanından okundu: " + getTckn);
                         String answer = getTckn;
                         setTckn("Veritabanından okundu: " + answer);
+                        //Burada hash kullanılabilir, eşsiz bir değer üretebilmek için işaretleme adına.
                         jedis.set(tckn,getTckn);
-                        //System.out.println("TCKN DB After Cache: " + jedis.get(tckn));
+                        //Expire edebilmek için jedis.expire kullanılabilir, bir araştır.
                     }
 
                 }catch (RuntimeException e)

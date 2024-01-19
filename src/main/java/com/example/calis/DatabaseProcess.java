@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 public class DatabaseProcess {
 
+    // Bunun tekil oluşması lazım multithread yüzünden patlayabiliyor. Valotile, Synchronize
     private static DatabaseProcess process = new DatabaseProcess();
 
     private DatabaseProcess()
@@ -17,7 +18,7 @@ public class DatabaseProcess {
     {
         return process;
     }
-
+    // process null check yapılması lazım
     String qry = "insert into users (fullname,tc) values (?,?)";
     public void saveToDatabase(String fullname, String tckn)
     {

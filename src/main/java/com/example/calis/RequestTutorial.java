@@ -21,24 +21,30 @@ public class RequestTutorial extends HttpServlet {
     {
         PrintWriter writer = servletResponse.getWriter();
         try {
-            ConnectionFactory factory = new ConnectionFactory();
+
             // servletRequest.getParameter("fullname"),servletRequest.getParameter("tckn")
-            publisher.createProcess(servletRequest.getParameter("fullname"), servletRequest.getParameter("tckn"), factory);
-            subscriber.setFactory(factory);
+            publisher.createProcess(servletRequest.getParameter("fullname"), servletRequest.getParameter("tckn"));
             subscriber.useProcess();
         } catch (TimeoutException e) {
             throw new RuntimeException(e);
         }
+
         writer.println("<html><body>");
+        for (int i = 0 ; i < 1000 ; i++)
+        {
+            writer.println("<p>" + DatabaseProcess.getInstance() +"</p>");
+        }
         writer.println("<h1>" + subscriber.getTckn() + "</h1>");
         writer.println("</body></html>");
     }
     @Override
     public void doPost(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws IOException
     {
+        //burada da rabbitmq olması lazım
         PrintWriter writer = servletResponse.getWriter();
 
         try {
+            // Buradaki connection bağlantısı kontrol edilmeli 1000 istek geldiğinde patlayabilir.
             DatabaseConnection.connect();
             boolean cond = dbprocess.checkDatabase(servletRequest.getParameter("fullname"),servletRequest.getParameter("tckn"));
             if(cond)
