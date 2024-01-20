@@ -40,7 +40,6 @@ public class Consumer {
             DeliverCallback deliverCallback = (s, message) ->
             {
                 String tckn = new String(message.getBody());
-                System.out.println("TCKN Consume Edildi: " + tckn);
                 try(Jedis jedis = pool.getResource()) {
                     if(jedis.get(tckn) != null)
                     {
@@ -50,7 +49,6 @@ public class Consumer {
                     }
                     else
                     {
-                        //dbden çek
                         Database dbprocess = Database.getInstance();
                         String getTckn = dbprocess.getFromDatabase(tckn);
                         System.out.println("Veritabanından okundu: " + getTckn);
