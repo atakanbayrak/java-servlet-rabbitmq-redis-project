@@ -1,5 +1,6 @@
 package com.example.calis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
 @WebServlet(name = "Controller", urlPatterns = {"/controller"})
@@ -40,7 +42,7 @@ public class Controller extends HttpServlet {
 
         try {
             // Buradaki connection bağlantısı kontrol edilmeli 1000 istek geldiğinde patlayabilir.
-            Database.connect();
+            //Database.connect();
             boolean cond = dbprocess.checkDatabase(servletRequest.getParameter("fullname"),servletRequest.getParameter("tckn"));
             if(cond)
             {
@@ -48,8 +50,21 @@ public class Controller extends HttpServlet {
             }
             else
             {
-                System.out.println("Kayıt mevcut degildi veritabanına kaydedildi");
-                dbprocess.saveToDatabase(servletRequest.getParameter("fullname"),servletRequest.getParameter("tckn"));
+                System.out.println("Kayıt mevcut degildi veritabanına kaydedilecek");
+                ArrayList<String> user = new ArrayList<String>();
+                user.add(servletRequest.getParameter("fullname"));
+                user.add(servletRequest.getParameter("tckn"));
+                try {
+                    publisher.createPost(user);
+                    subscriber.useCreation();
+                } catch (TimeoutException e) {
+                    throw new RuntimeException(e);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                //dbprocess.saveToDatabase(servletRequest.getParameter("fullname"),servletRequest.getParameter("tckn"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

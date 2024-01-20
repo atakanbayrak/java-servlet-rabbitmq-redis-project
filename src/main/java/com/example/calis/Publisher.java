@@ -1,10 +1,14 @@
 package com.example.calis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
 public class Publisher {
@@ -38,8 +42,10 @@ public class Publisher {
         }
     }
 
-    public void createPost(String tckn) throws TimeoutException {
+    public void createPost(ArrayList<String> user) throws TimeoutException, JsonProcessingException {
         ConnectionFactory factory = new ConnectionFactory();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(user);
         Connection connection;
         Channel channel;
         try
@@ -49,9 +55,9 @@ public class Publisher {
 
             channel.queueDeclare("post", true, false, false, null);
             channel.exchangeDeclare("my-direct", BuiltinExchangeType.DIRECT, true);
-            channel.queueBind("post", "my-direct", "tckn");
+            channel.queueBind("post", "my-direct", "db");
 
-            channel.basicPublish("my-direct", "tckn", null, tckn.getBytes());
+            channel.basicPublish("my-direct", "db", null, json.getBytes());
             channel.close();
             connection.close();
 
