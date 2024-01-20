@@ -28,7 +28,7 @@ public class Controller extends HttpServlet {
         }
         PrintWriter writer = servletResponse.getWriter();
         writer.println("<html><body>");
-        writer.println("<h1>" + subscriber.getTckn() + "</h1>");
+        writer.println("<h1>" + subscriber.getAnswer() + "</h1>");
         writer.println("</body></html>");
     }
 

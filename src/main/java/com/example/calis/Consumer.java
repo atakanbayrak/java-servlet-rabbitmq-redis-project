@@ -9,8 +9,6 @@ import java.util.concurrent.TimeoutException;
 
 public class Consumer {
 
-    private ConnectionFactory fac;
-    private Connection connection;
     private Channel channel;
     public String pushTckn;
     private static Consumer subscriber = new Consumer();
@@ -19,18 +17,10 @@ public class Consumer {
     {
         return subscriber;
     }
-    public void setTckn(String tckn)
-    {
-        pushTckn = tckn;
-    }
-    public String getTckn()
-    {
-        return pushTckn;
-    }
 
     public void useProcess() throws TimeoutException, IOException {
 
-        JedisPool pool = Config.getInstance().createJedis();
+        JedisPool pool = Config.createJedis();
         Connection connection;
         ConnectionFactory factory = new ConnectionFactory();
         try
@@ -46,21 +36,20 @@ public class Consumer {
                     {
                         System.out.println("TCKN From Cache: " + jedis.get(tckn));
                         String answer = jedis.get(tckn);
-                        setTckn("TCKN From Cache: " + answer);
+                        setAnswer("TCKN From Cache: " + answer);
                     }
                     else
                     {
                         Database dbprocess = Database.getInstance();
-                        String getTckn = dbprocess.getFromDatabase(tckn);
-                        System.out.println("Veritabanından okundu: " + getTckn);
-                        setTckn("Veritabanından okundu: " + getTckn);
+                        String tckndb = dbprocess.getFromDatabase(tckn);
+                        System.out.println("Veritabanından okundu: " + tckndb);
+                        setAnswer("Veritabanından okundu: " + tckndb);
 
-                        String hashValue = Hashing.generateHash(getTckn);
-                        jedis.set(hashValue,getTckn);
+                        String hashValue = Hashing.generateHash(tckndb);
+                        jedis.set(hashValue,tckndb);
                         jedis.expire(hashValue, 10);
                         jedis.close();
                     }
-
                 }catch (RuntimeException e)
                 {
                     System.out.println(e);
@@ -72,11 +61,20 @@ public class Consumer {
             CancelCallback cancelCallback = s -> {
                 System.out.println("No message"+s);
             };
+
             channel.basicConsume("kuyruk", true, deliverCallback, cancelCallback);
         }catch (IOException e)
         {
             throw new RuntimeException(e);
         }
+    }
 
+    public void setAnswer(String tckn)
+    {
+        pushTckn = tckn;
+    }
+    public String getAnswer()
+    {
+        return pushTckn;
     }
 }
