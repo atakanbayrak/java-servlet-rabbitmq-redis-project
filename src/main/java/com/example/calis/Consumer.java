@@ -4,6 +4,7 @@ import com.rabbitmq.client.*;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeoutException;
 
 public class Consumer {
@@ -18,7 +19,6 @@ public class Consumer {
     {
         return subscriber;
     }
-
     public void setTckn(String tckn)
     {
         pushTckn = tckn;
@@ -29,7 +29,8 @@ public class Consumer {
     }
 
     public void useProcess() throws TimeoutException, IOException {
-        JedisPool pool = new JedisPool("localhost", Integer.parseInt("6379"));
+
+        JedisPool pool = Config.getInstance().createJedis();
         Connection connection;
         ConnectionFactory factory = new ConnectionFactory();
         try
@@ -53,14 +54,18 @@ public class Consumer {
                         String getTckn = dbprocess.getFromDatabase(tckn);
                         System.out.println("Veritabanından okundu: " + getTckn);
                         setTckn("Veritabanından okundu: " + getTckn);
-                        //Burada hash kullanılabilir, eşsiz bir değer üretebilmek için işaretleme adına.
-                        jedis.set(tckn,getTckn);
-                        //Expire edebilmek için jedis.expire kullanılabilir, bir araştır.
+
+                        String hashValue = Hashing.generateHash(getTckn);
+                        jedis.set(hashValue,getTckn);
+                        jedis.expire(hashValue, 10);
+                        jedis.close();
                     }
 
                 }catch (RuntimeException e)
                 {
                     System.out.println(e);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
                 }
             };
 
