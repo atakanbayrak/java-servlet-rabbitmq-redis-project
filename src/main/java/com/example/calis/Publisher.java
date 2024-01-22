@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 
 public class Publisher {
 
-    private static Publisher publisher = new Publisher();
+    private final static Publisher publisher = new Publisher();
     public static Publisher getInstance()
     {
         return publisher;
@@ -42,7 +42,7 @@ public class Publisher {
         }
     }
 
-    public void createPost(ArrayList<String> user) throws TimeoutException, JsonProcessingException {
+    public void createPost(User user) throws TimeoutException, JsonProcessingException {
         ConnectionFactory factory = new ConnectionFactory();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);

@@ -5,7 +5,7 @@ import java.sql.*;
 public class Database {
 
     // Bunun tekil oluşması lazım multithread yüzünden patlayabiliyor. Valotile, Synchronize
-    private static Database process = new Database();
+    private final static Database process = new Database();
     public static Database getInstance()
     {
         return process;
@@ -42,7 +42,6 @@ public class Database {
 
     public String getFromDatabase(String tckn)
     {
-        System.out.println("GET TCKN: "+ tckn);
         ResultSet result = null;
         String slct = "SELECT * FROM users WHERE tc = '"+tckn+"'";
         try {

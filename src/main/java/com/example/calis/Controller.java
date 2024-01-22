@@ -30,16 +30,14 @@ public class Controller extends HttpServlet {
         }
         PrintWriter writer = servletResponse.getWriter();
         writer.println("<html><body>");
-        writer.println("<h1>" + subscriber.getAnswer() + "</h1>");
+        writer.println("<h1>" + "Okuma basarili" + "</h1>");
         writer.println("</body></html>");
     }
 
     @Override
     public void doPost(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws IOException
     {
-        //burada da rabbitmq olması lazım
         PrintWriter writer = servletResponse.getWriter();
-
         try {
             // Buradaki connection bağlantısı kontrol edilmeli 1000 istek geldiğinde patlayabilir.
             //Database.connect();
@@ -50,21 +48,16 @@ public class Controller extends HttpServlet {
             }
             else
             {
-                System.out.println("Kayıt mevcut degildi veritabanına kaydedilecek");
-                ArrayList<String> user = new ArrayList<String>();
-                user.add(servletRequest.getParameter("fullname"));
-                user.add(servletRequest.getParameter("tckn"));
+                System.out.println("Kayıt mevcut degil veritabanına kaydedilecek");
+                User user = new User();
+                user.setTckn(servletRequest.getParameter("tckn"));
+                user.setFullname(servletRequest.getParameter("fullname"));
                 try {
                     publisher.createPost(user);
                     subscriber.useCreation();
                 } catch (TimeoutException e) {
                     throw new RuntimeException(e);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
                 }
-
-
-                //dbprocess.saveToDatabase(servletRequest.getParameter("fullname"),servletRequest.getParameter("tckn"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
