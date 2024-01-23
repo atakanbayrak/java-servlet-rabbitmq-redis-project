@@ -39,8 +39,6 @@ public class Controller extends HttpServlet {
     {
         PrintWriter writer = servletResponse.getWriter();
         try {
-            // Buradaki connection bağlantısı kontrol edilmeli 1000 istek geldiğinde patlayabilir.
-            //Database.connect();
             boolean cond = dbprocess.checkDatabase(servletRequest.getParameter("fullname"),servletRequest.getParameter("tckn"));
             if(cond)
             {
